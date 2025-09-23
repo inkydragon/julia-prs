@@ -3,6 +3,7 @@ name: Continuous integration
 on:
   push:
     branches: [ master ]
+  pull_request:
   schedule:
     # Run every 15 minutes of every hour, starting at 5 minutes (5m, 20m, 35m, 50m).
     # The slight offset is there to try and avoid the high load times.
@@ -52,6 +53,7 @@ jobs:
         path: out
 
     - name: Deploy to GitHub Pages 🚀
+      if: github.event_name != 'pull_request'
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: gh-pages
