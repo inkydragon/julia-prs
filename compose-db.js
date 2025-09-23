@@ -8,6 +8,8 @@ const ExitCodes = {
 };
 
 const PULLS_PER_PAGE = 100;
+const API_DELAY_MSEC = 2500;
+const API_MAX_RETRIES = 10;
 const API_RATE_LIMIT = `
   rateLimit {
     limit
@@ -58,8 +60,12 @@ class DataFetcher {
            console.log(`    [${item.type}] ${item.message}`);
         });
     }
-    
-    async fetchGithub(query) {
+
+    async delay(msec) {
+        return new Promise(resolve => setTimeout(resolve, msec));
+    }
+
+    async fetchGithub(query, retries = 0) {
         const init = {};
         init.method = "POST";
         init.headers = {};
@@ -68,13 +74,42 @@ class DataFetcher {
             init.headers["Authorization"] = `token ${process.env.GRAPHQL_TOKEN}`;
         } else if (process.env.GITHUB_TOKEN) {
             init.headers["Authorization"] = `token ${process.env.GITHUB_TOKEN}`;
+        } else {
+            console.error("    Unable to find environment variable: `GRAPHQL_TOKEN`. Did you forget to set it in your local environment or a root `.env` file?");
+            process.exitCode = buildCommon.ExitCodes.ParseFailure;
+            return [null, null];
         }
-    
+
         init.body = JSON.stringify({
             query,
         });
-    
-        return await fetch("https://api.github.com/graphql", init);
+
+        let res = await fetch("https://api.github.com/graphql", init);
+        let attempt = 0;
+
+        while (true) {
+            if (attempt > retries) {
+                return [res, null];
+            }
+
+            if (res.status === 200) {
+                try {
+                    const json = await res.json()
+                    return [res, json];
+                }
+                catch (err) {
+                    console.log(`    Failed due to invalid response body, retrying (${attempt}/${retries})...`);
+                }
+            }
+            else {
+                console.log(`    Failed with status ${res.status}, retrying (${attempt}/${retries})...`);
+            }
+
+            // GitHub API is flaky, so we add an extra delay to let it calm down a bit.
+            await this.delay(API_DELAY_MSEC);
+            attempt += 1;
+            res = await fetch("https://api.github.com/graphql", init);
+        }
     }
 
     async fetchGithubRest(query) {
@@ -86,8 +121,12 @@ class DataFetcher {
             init.headers["Authorization"] = `token ${process.env.GRAPHQL_TOKEN}`;
         } else if (process.env.GITHUB_TOKEN) {
             init.headers["Authorization"] = `token ${process.env.GITHUB_TOKEN}`;
+        } else {
+            console.error("    Unable to find environment variable: `GRAPHQL_TOKEN`. Did you forget to set it in your local environment or a root `.env` file?");
+            process.exitCode = buildCommon.ExitCodes.ParseFailure;
+            return null;
         }
-    
+
         return await fetch(`${this.api_rest_path}${query}`, init);
     }
     
@@ -99,14 +138,13 @@ class DataFetcher {
             }
             `;
     
-            const res = await this.fetchGithub(query);
-            if (res.status !== 200) {
+            const [res, data] = await this.fetchGithub(query);
+            if (res.status !== 200 || data == null) {
                 this._handleResponseErrors(this.api_repository_id, res);
                 process.exitCode = ExitCodes.RequestFailure;
                 return;
             }
     
-            const data = await res.json();
             await this._logResponse(data, "_rate_limit");
             this._handleDataErrors(data);
     
@@ -191,14 +229,13 @@ class DataFetcher {
             }
             console.log(`    Requesting page ${page_text} of pull request data (${after_text}).`);
     
-            const res = await this.fetchGithub(query);
-            if (res.status !== 200) {
+            const [res, data] = await this.fetchGithub(query, API_MAX_RETRIES);
+            if (res.status !== 200 || data == null) {
                 this._handleResponseErrors(this.api_repository_id, res);
                 process.exitCode = ExitCodes.RequestFailure;
                 return [];
             }
     
-            const data = await res.json();
             await this._logResponse(data, `data_page_${page}`);
             this._handleDataErrors(data);
     
