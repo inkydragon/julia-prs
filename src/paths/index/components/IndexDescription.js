@@ -67,10 +67,7 @@ export default class IndexDescription extends LitElement {
     constructor() {
       super();
 
-      this._availableRepos = [
-        "godotengine/godot",
-        "godotengine/godot-docs",
-      ];
+      this._availableRepos = [ ...greports.config.AVAILABLE_REPOSITORIES ];
     }
 
     render() {

@@ -1,7 +1,22 @@
-const LOCAL_PREFERENCE_PREFIX = "_godot_prbf"
+const LOCAL_PREFERENCE_PREFIX = "_jl_prbf"
+
+const DEFAULT_REPO = "JuliaLang/julia";
+const DEFAULT_BRANCH = "master";
+const ReportsConfig = {
+  DEFAULT_REPOSITORY: DEFAULT_REPO,
+  DEFAULT_BRANCH: DEFAULT_BRANCH,
+
+  DEFAULT_BRANCH_BY_REPOSITORY: {
+    DEFAULT_REPO: DEFAULT_BRANCH,
+  },
+  AVAILABLE_REPOSITORIES: [
+    DEFAULT_REPO,
+  ],
+};
+
 const LOCAL_PREFERENCE_DEFAULTS = {
-  "selectedRepository" : "godotengine/godot",
-  "selectedBranches"   : {"godotengine/godot": "master"},
+  "selectedRepository" : ReportsConfig.DEFAULT_REPOSITORY,
+  "selectedBranches"   : { ...ReportsConfig.DEFAULT_BRANCH_BY_REPOSITORY },
 };
 
 // API Interaction
@@ -97,7 +112,10 @@ const ReportsUtils = {
 
   getLocalPreferences() {
     // Always fallback on defaults.
-    const localPreferences = { ...LOCAL_PREFERENCE_DEFAULTS };
+    const localPreferences = {
+      ...LOCAL_PREFERENCE_DEFAULTS,
+      "selectedBranches": { ...LOCAL_PREFERENCE_DEFAULTS.selectedBranches },
+    };
 
     for (let key in localPreferences) {
       const storedValue = localStorage.getItem(`${LOCAL_PREFERENCE_PREFIX}_${key}`);
@@ -127,6 +145,7 @@ const ReportsSingleton = {
   api: ReportsAPI,
   format: ReportsFormatter,
   util: ReportsUtils,
+  config: ReportsConfig,
 };
 
 window.greports = ReportsSingleton;

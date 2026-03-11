@@ -50,8 +50,8 @@ export default class EntryComponent extends LitElement {
         this._files = {};
         this._pulls = [];
 
-        this._selectedRepository = "godotengine/godot";
-        this._selectedBranch = "master";
+        this._selectedRepository = greports.config.DEFAULT_REPOSITORY;
+        this._selectedBranch = greports.config.DEFAULT_BRANCH;
         this._selectedPath = "";
         this._selectedPathPulls = [];
 

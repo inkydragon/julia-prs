@@ -102,8 +102,8 @@ export default class FileList extends LitElement {
     @property({ type: Array }) branches = [];
     @property({ type: Object }) files = {};
 
-    @property({ type: String }) selectedRepository = "godotengine/godot";
-    @property({ type: String }) selectedBranch = "master";
+    @property({ type: String }) selectedRepository = greports.config.DEFAULT_REPOSITORY;
+    @property({ type: String }) selectedBranch = greports.config.DEFAULT_BRANCH;
     @property({ type: String }) selectedPath = "";
     @property({ type: Array }) selectedFolders = [];
     @property({ type: String }) filteredPull = "";
