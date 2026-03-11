@@ -56,9 +56,22 @@ export default class EntryComponent extends LitElement {
         this._selectedPathPulls = [];
 
         this._filteredPull = "";
+        this._filterAuthor = "";
+        this._urlState = greports.util.getPageState();
 
         this._restoreUserPreferences();
         this._requestData();
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+        this._onPopState = this._handlePopState.bind(this);
+        window.addEventListener("popstate", this._onPopState);
+    }
+
+    disconnectedCallback() {
+        window.removeEventListener("popstate", this._onPopState);
+        super.disconnectedCallback();
     }
 
     performUpdate() {
@@ -69,8 +82,15 @@ export default class EntryComponent extends LitElement {
     _restoreUserPreferences() {
         const userPreferences = greports.util.getLocalPreferences();
 
-        this._selectedRepository = userPreferences["selectedRepository"];
+        this._selectedRepository = this._urlState.repository || userPreferences["selectedRepository"];
         this._restoreSelectedBranch();
+
+        if (this._urlState.branch !== "") {
+            this._selectedBranch = this._urlState.branch;
+        }
+        this._selectedPath = this._urlState.path || "";
+        this._filteredPull = this._urlState.pull || "";
+        this._filterAuthor = this._urlState.author || "";
     }
 
     _restoreSelectedBranch() {
@@ -103,7 +123,7 @@ export default class EntryComponent extends LitElement {
         this._entryRequested = true;
         this._isLoading = true;
 
-        const requested_repo = greports.util.getHistoryHash();
+        const requested_repo = this._urlState.repository;
         if (requested_repo !== "" && this._selectedRepository !== requested_repo) {
             this._selectedRepository = requested_repo;
             this._restoreSelectedBranch();
@@ -162,6 +182,9 @@ export default class EntryComponent extends LitElement {
             if (typeof this._files[this._selectedBranch] === "undefined" && data.branches.length > 0) {
                 this._selectedBranch = data.branches[0];
             }
+
+            this._restoreSelectedPathPulls();
+            this._syncUrlState(true);
         } else {
             this._generatedAt = null;
 
@@ -173,9 +196,79 @@ export default class EntryComponent extends LitElement {
             this._selectedBranch = "master";
             this._selectedPath = "";
             this._selectedPathPulls = [];
+            this._syncUrlState(true);
         }
 
         this._isLoading = false;
+        this.requestUpdate();
+    }
+
+    _restoreSelectedPathPulls() {
+        if (this._selectedPath === "") {
+            this._selectedPathPulls = [];
+            return;
+        }
+
+        const branchFiles = this._files[this._selectedBranch] || {};
+        const topLevel = branchFiles[""] || [];
+        const selectedEntry = this._findFileEntry(branchFiles, topLevel, this._selectedPath);
+
+        if (!selectedEntry) {
+            this._selectedPath = "";
+            this._selectedPathPulls = [];
+            return;
+        }
+
+        this._selectedPathPulls = selectedEntry.pulls || [];
+
+        if (this._filteredPull !== "") {
+            const pullNumber = parseInt(this._filteredPull, 10);
+            if (!this._selectedPathPulls.includes(pullNumber)) {
+                this._selectedPath = "";
+                this._selectedPathPulls = [];
+            }
+        }
+    }
+
+    _findFileEntry(branchFiles, entries, targetPath) {
+        for (const item of entries) {
+            if (item.path === targetPath) {
+                return item;
+            }
+
+            if (item.type === "folder") {
+                const childEntry = this._findFileEntry(branchFiles, branchFiles[item.path] || [], targetPath);
+                if (childEntry) {
+                    return childEntry;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    _syncUrlState(replace = false) {
+        const generatedAt = (this._generatedAt ? greports.format.formatDate(this._generatedAt) : "");
+
+        greports.util.setPageState({
+            repository: this._selectedRepository,
+            branch: this._selectedBranch,
+            path: this._selectedPath,
+            pull: this._filteredPull,
+            author: this._filterAuthor,
+            generatedAt: generatedAt,
+        }, replace);
+    }
+
+    _handlePopState() {
+        this._urlState = greports.util.getPageState();
+        if (this._urlState.repository !== "" && this._urlState.repository !== this._selectedRepository) {
+            window.location.reload();
+            return;
+        }
+
+        this._restoreUserPreferences();
+        this._restoreSelectedPathPulls();
         this.requestUpdate();
     }
 
@@ -189,6 +282,7 @@ export default class EntryComponent extends LitElement {
             }
         }
 
+        this._syncUrlState();
         this.requestUpdate();
     }
 
@@ -202,12 +296,14 @@ export default class EntryComponent extends LitElement {
         this._selectedPathPulls = [];
 
         this._saveUserPreferences()
+        this._syncUrlState();
         this.requestUpdate();
     }
 
     _onPathClicked(event) {
         this._selectedPath = event.detail.path;
         this._selectedPathPulls = event.detail.pulls;
+        this._syncUrlState();
         this.requestUpdate();
 
         window.scrollTo(0, 0);
@@ -224,6 +320,7 @@ export default class EntryComponent extends LitElement {
                     <h3>Loading...</h3>
                 ` : html`
                     <gr-pull-filter
+                        .value="${this._filteredPull}"
                         @filterchanged="${this._onPullFilterChanged}"
                     ></gr-pull-filter>
 

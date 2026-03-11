@@ -98,15 +98,50 @@ const ReportsUtils = {
     return "";
   },
 
-  setHistoryHash(hash) {
+  getPageState() {
     const url = new URL(window.location);
-    url.hash = hash;
-    window.history.pushState({}, "", url);
+    const params = url.searchParams;
+    const legacyRepo = this.getHistoryHash();
+
+    return {
+      repository: params.get("repo") || legacyRepo || "",
+      branch: params.get("branch") || "",
+      path: params.get("path") || "",
+      pull: params.get("pr") || "",
+      author: params.get("author") || "",
+      generatedAt: params.get("data") || "",
+    };
   },
 
-  navigateHistoryHash(hash) {
-    this.setHistoryHash(hash);
-    window.location.reload();
+  setPageState(state = {}, replace = false) {
+    const url = new URL(window.location);
+    const pageState = {
+      repository: state.repository || "",
+      branch: state.branch || "",
+      path: state.path || "",
+      pull: state.pull || "",
+      author: state.author || "",
+      generatedAt: state.generatedAt || "",
+    };
+
+    url.hash = "";
+    this._setOrDeleteSearchParam(url, "repo", pageState.repository);
+    this._setOrDeleteSearchParam(url, "branch", pageState.branch);
+    this._setOrDeleteSearchParam(url, "path", pageState.path);
+    this._setOrDeleteSearchParam(url, "pr", pageState.pull);
+    this._setOrDeleteSearchParam(url, "author", pageState.author);
+    this._setOrDeleteSearchParam(url, "data", pageState.generatedAt);
+
+    const historyMethod = replace ? "replaceState" : "pushState";
+    window.history[historyMethod]({}, "", url);
+  },
+
+  _setOrDeleteSearchParam(url, name, value) {
+    if (value === "") {
+      url.searchParams.delete(name);
+    } else {
+      url.searchParams.set(name, value);
+    }
   },
 
   getLocalPreferences() {
