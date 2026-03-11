@@ -114,6 +114,16 @@ export default class FileList extends LitElement {
         this._branchSelectorActive = false;
     }
 
+    updated(changedProperties) {
+      if (
+        changedProperties.has("selectedPath") ||
+        changedProperties.has("selectedBranch") ||
+        changedProperties.has("files")
+      ) {
+        this.selectedFolders = this._getOpenFolders(this.selectedPath);
+      }
+    }
+
     _onBranchClicked() {
       this._branchSelectorActive = !this._branchSelectorActive;
       this.requestUpdate();
@@ -172,6 +182,28 @@ export default class FileList extends LitElement {
             "pulls": entryPulls,
         }));
       }
+    }
+
+    _getOpenFolders(path) {
+      if (path === "") {
+        return [];
+      }
+
+      const pathBits = path.split("/").filter((item) => item !== "");
+      const selectedFolders = [];
+      let currentPath = "";
+
+      pathBits.slice(0, -1).forEach((item) => {
+        currentPath = (currentPath === "") ? item : `${currentPath}/${item}`;
+        selectedFolders.push(currentPath);
+      });
+
+      const branchFiles = this.files[this.selectedBranch] || {};
+      if (typeof branchFiles[path] !== "undefined") {
+        selectedFolders.push(path);
+      }
+
+      return selectedFolders;
     }
 
     renderFolder(branchFiles, folderFiles) {

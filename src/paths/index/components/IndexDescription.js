@@ -86,8 +86,12 @@ export default class IndexDescription extends LitElement {
                       return html`
                         <br />
                         <a
-                          href="#${item}"
-                          @click="${() => greports.util.navigateHistoryHash(item)}"
+                          href="?repo=${encodeURIComponent(item)}"
+                          @click="${(event) => {
+                            event.preventDefault();
+                            greports.util.setPageState({ repository: item }, false);
+                            window.location.reload();
+                          }}"
                         >${item}</a>
                       `;
                     })}

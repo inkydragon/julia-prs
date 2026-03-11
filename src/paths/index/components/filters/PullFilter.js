@@ -84,6 +84,15 @@ export default class PullFilter extends LitElement {
         this._resolvedValue = "";
     }
 
+    @property({ type: String }) value = "";
+
+    updated(changedProperties) {
+        if (changedProperties.has("value")) {
+            this._rawValue = this.value;
+            this._resolvedValue = (this.value !== "" ? this._parsePullNumber(this.value) : "");
+        }
+    }
+
     _parsePullNumber(value) {
         let match = value.match(GH_PULL_URL_RE);
         if (match) {
