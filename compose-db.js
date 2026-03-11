@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const fsConstants = require('fs').constants;
 const fetch = require('node-fetch');
+require('dotenv').config();
 
 /** The owner of the repository to fetch data from. */
 const REPO_OWNER = "JuliaLang";
