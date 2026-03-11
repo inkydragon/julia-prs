@@ -1,7 +1,14 @@
 const fs = require('fs').promises;
 const fsConstants = require('fs').constants;
-const fetch = require('node-fetch');
 require('dotenv').config();
+
+const fetch = (...args) => {
+    if (typeof globalThis.fetch === "function") {
+        return globalThis.fetch(...args);
+    }
+
+    return import('node-fetch').then(({ default: nodeFetch }) => nodeFetch(...args));
+};
 
 /** The owner of the repository to fetch data from. */
 const REPO_OWNER = "JuliaLang";
@@ -82,7 +89,7 @@ class DataFetcher {
             init.headers["Authorization"] = `token ${process.env.GITHUB_TOKEN}`;
         } else {
             console.error("    Unable to find environment variable: `GRAPHQL_TOKEN`. Did you forget to set it in your local environment or a root `.env` file?");
-            process.exitCode = buildCommon.ExitCodes.ParseFailure;
+            process.exitCode = ExitCodes.ParseFailure;
             return [null, null];
         }
 
@@ -129,7 +136,7 @@ class DataFetcher {
             init.headers["Authorization"] = `token ${process.env.GITHUB_TOKEN}`;
         } else {
             console.error("    Unable to find environment variable: `GRAPHQL_TOKEN`. Did you forget to set it in your local environment or a root `.env` file?");
-            process.exitCode = buildCommon.ExitCodes.ParseFailure;
+            process.exitCode = ExitCodes.ParseFailure;
             return null;
         }
 
