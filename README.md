@@ -1,11 +1,7 @@
 # Julia PRs by File
 
-This project is provided for Julia Engine contributors to quickly find open
-PRs editing a specific file or folder. With the amount of work that goes into
-Julia it becomes tricky to keep in mind every PR that touches every file, and
-identify conflicts or duplicates. This project aims to help with that.
-
-Live website: https://JuliaLang.github.io/julia-prs-by-file/
+This project is provided for JuliaLang/julia contributors to quickly find open
+PRs editing a specific file or folder.
 
 ## Contributing
 
@@ -17,7 +13,7 @@ Front-end is designed in a reactive manner using industry standard Web Component
 (powered by `lit-element`). This provides native browser support, and results in a
 small overhead from the build process.
 
-To build the project locally you need to have Node.JS installed (12.x and newer
+To build the project locally you need to have Node.JS installed (20.x and newer
 should work just fine).
 
 This project uses GitHub's GraphQL API. To fetch live data you need to generate
@@ -40,3 +36,5 @@ data fetching script is plain JavaScript with `node-fetch` used to polyfill
 ## License
 
 This project is provided under the [MIT License](LICENSE.md).
+
+NOTE: This project is forked from [godotengine/godot-prs-by-file](https://github.com/godotengine/godot-prs-by-file)
