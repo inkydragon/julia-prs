@@ -130,6 +130,7 @@ export default class PullRequestList extends LitElement {
 
             return true;
         });
+        pulls.sort((a, b) => b.public_id - a.public_id);
 
         const total_pulls = this.pulls.length;
         let filtered_pulls = pulls.length
