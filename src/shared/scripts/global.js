@@ -40,13 +40,12 @@ const ReportsAPI = {
 // Content helpers
 const ReportsFormatter = {
   formatDate(dateString) {
-    const options = {
-      year: 'numeric', month: 'long', day: 'numeric',
-    };
-    const dateFormatter = new Intl.DateTimeFormat('en-US', options);
-
     const date = new Date(dateString);
-    return dateFormatter.format(date);
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   },
 
   formatTimestamp(timeString) {
