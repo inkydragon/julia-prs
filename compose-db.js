@@ -2,6 +2,11 @@ const fs = require('fs').promises;
 const fsConstants = require('fs').constants;
 const fetch = require('node-fetch');
 
+/** The owner of the repository to fetch data from. */
+const REPO_OWNER = "JuliaLang";
+/** The name of the repository to fetch data from. */
+const REPO_NAME = "julia";
+
 const ExitCodes = {
     "RequestFailure": 1,
     "ParseFailure": 2,
@@ -475,8 +480,8 @@ async function main() {
 
     console.log("[*] Building local pull request database.");
 
-    let data_owner = "godotengine";
-    let data_repo = "godot";
+    let data_owner = REPO_OWNER;
+    let data_repo = REPO_NAME;
     process.argv.forEach((arg) => {
         if (arg.indexOf("owner:") === 0) {
             data_owner = arg.substring(6);
