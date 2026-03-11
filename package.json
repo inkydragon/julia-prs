@@ -1,13 +1,25 @@
 {
   "name": "julia-prs-by-file",
   "version": "1.0.0",
+  "private": true,
   "description": "",
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "Yuri Sizov",
+      "email": "yuris@humnom.net",
+      "url": "https://github.com/YuriSizov"
+    },
+    {
+      "name": "Chengyu HAN",
+      "email": "cyhan.dev@outlook.com",
+      "url": "https://github.com/inkydragon"
+    }
+  ],
   "scripts": {
     "build": "rollup -c",
     "compose-db": "node ./compose-db.js"
   },
-  "author": "Yuri Sizov <yuris@humnom.net>",
-  "private": true,
   "dependencies": {
     "@babel/core": "^7.6.4",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
