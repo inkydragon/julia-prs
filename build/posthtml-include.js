@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import parser from "posthtml-parser";
+import { parser } from "posthtml-parser";
 
 export default function(options) {
   options = options || {};
