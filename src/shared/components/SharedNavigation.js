@@ -97,20 +97,11 @@ export default class SharedNavigation extends LitElement {
 
         return html`
             <div class="${containerClassList.join(" ")}">
-                <a href="https://godotengine.github.io/doc-status/" target="_blank" class="nav-item">
-                    ClassRef Status
+                <a href="https://julialang.org/" target="_blank" class="nav-item">
+                    JuliaLang
                 </a>
-                <a href="https://godot-proposals-viewer.github.io/" target="_blank" class="nav-item">
-                    Proposal Viewer
-                </a>
-                <a href="https://godotengine.github.io/godot-team-reports/" target="_blank" class="nav-item">
-                    Team Reports
-                </a>
-                <a href="https://godotengine.github.io/godot-commit-artifacts/" target="_blank" class="nav-item">
-                    Commit Artifacts
-                </a>
-                <a href="https://godotengine.github.io/godot-interactive-changelog/" target="_blank" class="nav-item">
-                    Interactive Changelog
+                <a href="https://github.com/JuliaLang/julia/" target="_blank" class="nav-item">
+                    GitHub Repo
                 </a>
             </div>
             <div

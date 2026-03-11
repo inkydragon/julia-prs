@@ -1,11 +1,11 @@
-# Godot PRs by File
+# Julia PRs by File
 
-This project is provided for Godot Engine contributors to quickly find open
+This project is provided for Julia Engine contributors to quickly find open
 PRs editing a specific file or folder. With the amount of work that goes into
-Godot it becomes tricky to keep in mind every PR that touches every file, and
+Julia it becomes tricky to keep in mind every PR that touches every file, and
 identify conflicts or duplicates. This project aims to help with that.
 
-Live website: https://godotengine.github.io/godot-prs-by-file/
+Live website: https://JuliaLang.github.io/julia-prs-by-file/
 
 ## Contributing
 

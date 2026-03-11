@@ -94,7 +94,7 @@ export default class IndexHeader extends LitElement {
         return html`
             <div class="header">
                 <h1 class="header-title">
-                    Godot PRs by File
+                    Julia PRs by File
                 </h1>
                 <div class="header-metadata">
                     ${(this.generated_at ? html`
@@ -104,7 +104,7 @@ export default class IndexHeader extends LitElement {
                     ` : '')}
                     <br/>
                     <a
-                            href="https://github.com/godotengine/godot-prs-by-file"
+                            href="https://github.com/JuliaLang/julia-prs-by-file"
                             target="_blank"
                     >
                         contribute on GitHub
