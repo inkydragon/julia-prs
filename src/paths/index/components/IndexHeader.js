@@ -104,7 +104,7 @@ export default class IndexHeader extends LitElement {
                     ` : '')}
                     <br/>
                     <a
-                            href="https://github.com/JuliaLang/julia-prs-by-file"
+                            href="https://github.com/inkydragon/julia-prs"
                             target="_blank"
                     >
                         contribute on GitHub

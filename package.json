@@ -1,22 +1,35 @@
 {
   "name": "julia-prs-by-file",
   "version": "1.0.0",
+  "private": true,
   "description": "",
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "Yuri Sizov",
+      "email": "yuris@humnom.net",
+      "url": "https://github.com/YuriSizov"
+    },
+    {
+      "name": "Chengyu HAN",
+      "email": "cyhan.dev@outlook.com",
+      "url": "https://github.com/inkydragon"
+    }
+  ],
   "scripts": {
     "build": "rollup -c",
     "compose-db": "node ./compose-db.js"
   },
-  "author": "Yuri Sizov <yuris@humnom.net>",
-  "private": true,
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@babel/core": "^7.6.4",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-proposal-decorators": "^7.6.0",
-    "dompurify": "^2.0.7",
+    "dotenv": "^17.3.1",
     "lit-element": "^2.2.1",
-    "marked": "^0.7.0",
-    "node-fetch": "^2.7.0",
-    "posthtml": "^0.12.0",
+    "node-fetch": "^3",
+    "posthtml": "^0.16",
+    "posthtml-parser": "^0.12.1",
     "rollup": "^1.24.0",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
