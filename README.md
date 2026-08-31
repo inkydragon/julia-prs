@@ -38,3 +38,13 @@ data fetching script is plain JavaScript with `node-fetch` used to polyfill
 This project is provided under the [MIT License](LICENSE.md).
 
 NOTE: This project is forked from [godotengine/godot-prs-by-file](https://github.com/godotengine/godot-prs-by-file)
+
+## Credits
+
+The favicon is the official Julia logo (the "julia-dots" mark), sourced from
+[JuliaLang/julia-logo-graphics](https://github.com/JuliaLang/julia-logo-graphics)
+and served via <https://julialang.org/assets/infra/julia.ico>.
+
+Logo designs are Copyright (c) 2012-2022 Stefan Karpinski and licensed under the
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0).
+Non-commercial use only.
