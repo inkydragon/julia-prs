@@ -6,6 +6,7 @@
 |---|---|
 | [spec-functional.zh-cn.md](spec-functional.zh-cn.md) | 功能规格：通用能力定义 + 项目举例（F-*）|
 | [design-ui.zh-cn.md](design-ui.zh-cn.md) | UI/交互设计：布局、组件结构、交互流程、主题 |
+| [data-source.zh-cn.md](data-source.zh-cn.md) | 数据获取说明：需要什么数据、参考地址、关键约束（不含接口细节）|
 
 > 两份中文文档均以**通用模板能力**为主，用本案例（JuliaLang/julia）举例说明，
 > 便于接入其他项目时理解与复用。文件以 `.zh-cn.md` 标注语言。
