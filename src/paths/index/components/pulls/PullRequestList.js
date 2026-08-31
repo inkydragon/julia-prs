@@ -114,7 +114,11 @@ export default class PullRequestList extends LitElement {
     @property({ type: String }) filteredPull = "";
 
     render(){
-        if (this.selectedPath === "") {
+        const has_pinned = (this.filteredPull !== "");
+
+        // A pinned PR must be renderable even when it only touches new files,
+        // which are not present in the branch tree, leaving selectedPath empty.
+        if (this.selectedPath === "" && !has_pinned) {
             return html``;
         }
 
@@ -135,7 +139,6 @@ export default class PullRequestList extends LitElement {
         const total_pulls = this.pulls.length;
         let filtered_pulls = pulls.length
 
-        const has_pinned = (this.filteredPull !== "");
         if (has_pinned) {
           filtered_pulls -= 1;
         }

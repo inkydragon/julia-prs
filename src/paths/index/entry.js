@@ -289,6 +289,54 @@ export default class EntryComponent extends LitElement {
         return null;
     }
 
+    /**
+     * Find the first path of a pull request that actually exists in the
+     * branch tree, so the file list can highlight it. Newly added files are
+     * not part of the tree snapshot and are therefore skipped.
+     * @param {Object} branchFiles
+     * @param {Object} pull
+     * @returns {string}
+     */
+    _findLocatedPullPath(branchFiles, pull) {
+        const topLevel = branchFiles[""] || [];
+        if (!pull.files) {
+            return "";
+        }
+
+        for (const file of pull.files) {
+            const path = (file && typeof file === "object") ? file.path : null;
+            if (path && this._findFileEntry(branchFiles, topLevel, path)) {
+                return path;
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * Adjust the UI so the given pull request is reachable: switch to its
+     * target branch and select one of its files. The PR stays reachable even
+     * when it only touches newly added files, so we always pin its number.
+     * @param {number} pullNumber
+     * @param {Object} pull
+     * @returns {void}
+     */
+    _locatePullInUi(pullNumber, pull) {
+        const branchFiles = typeof this._files[pull.target_branch] === "undefined"
+            ? null
+            : this._files[pull.target_branch];
+        if (branchFiles === null) {
+            return;
+        }
+
+        if (pull.target_branch !== this._selectedBranch) {
+            this._selectedBranch = pull.target_branch;
+        }
+
+        this._selectedPath = this._findLocatedPullPath(branchFiles, pull);
+        this._selectedPathPulls = [pullNumber];
+    }
+
     _syncUrlState(replace = false) {
         const generatedAt = (this._generatedAt ? greports.format.formatDate(this._generatedAt) : "");
 
@@ -318,9 +366,9 @@ export default class EntryComponent extends LitElement {
         this._filteredPull = event.detail.pull;
         if (this._filteredPull !== "") {
             const pullNumber = parseInt(this._filteredPull, 10);
-            if (!this._selectedPathPulls.includes(pullNumber)) {
-                this._selectedPath = "";
-                this._selectedPathPulls = [];
+            const pull = this._pulls.find((item) => item.public_id === pullNumber);
+            if (pull) {
+                this._locatePullInUi(pullNumber, pull);
             }
         }
 
