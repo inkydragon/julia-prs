@@ -49,7 +49,8 @@ class DataFetcher {
                 await fs.mkdir("logs");
             }
     
-            await fs.writeFile(`logs/${name}.json`, JSON.stringify(data, null, 4), {encoding: "utf-8"});
+            const safeName = name.replaceAll("/", "_");
+            await fs.writeFile(`logs/${safeName}.json`, JSON.stringify(data, null, 4), {encoding: "utf-8"});
         } catch (err) {
             console.error("Error saving log file: " + err);
         }
