@@ -104,15 +104,6 @@ export default class EntryComponent extends LitElement {
     }
 
     /**
-     * Check whether a branch is shown in the UI.
-     * @param {string} branch
-     * @returns {boolean}
-     */
-    _isAllowedBranch(branch) {
-        return /^(master|release-.*|backports-release-.*)$/.test(branch);
-    }
-
-    /**
      * Extract the version string from a release-ish branch, e.g. "release-1.11" -> "1.11".
      * @param {string} branch
      * @returns {string}
@@ -188,9 +179,7 @@ export default class EntryComponent extends LitElement {
                     return;
                 }
 
-                if (this._isAllowedBranch(branch)) {
-                    this._branches.push(branch);
-                }
+                this._branches.push(branch);
                 const branchFiles = {};
 
                 data.files[branch].forEach((file) => {
