@@ -16,6 +16,13 @@
 - This project builds a static web app; deployed output lives in `out/`.
 - Prefer updating `package.json` and `yarn.lock` together when changing dependencies.
 
+## Architecture Decisions Record (ADR)
+
+- Record significant "why" decisions (trade-offs, alternatives, consequences) as ADRs in `docs/adr/`.
+- Name files as `NNNN-short-kebab-description.md` with a leading zero-padded number (e.g. `0001-branch-listing-and-sorting.md`).
+- Each ADR uses the sections `Status`, `Date`, `Context`, `Decision`, and `Consequences`.
+- Keep this document for build/usage guidance; keep ADRs for design rationale.
+
 ## Git Commit Conventions
 
 - Write commit messages in English only.
