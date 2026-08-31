@@ -103,6 +103,54 @@ export default class EntryComponent extends LitElement {
         }
     }
 
+    /**
+     * Check whether a branch is shown in the UI.
+     * @param {string} branch
+     * @returns {boolean}
+     */
+    _isAllowedBranch(branch) {
+        return /^(master|release-.*|backports-release-.*)$/.test(branch);
+    }
+
+    /**
+     * Extract the version string from a release-ish branch, e.g. "release-1.11" -> "1.11".
+     * @param {string} branch
+     * @returns {string}
+     */
+    _getBranchVersion(branch) {
+        const match = branch.match(/^(release-|backports-release-)([\d.]+)$/);
+        return match ? match[2] : "";
+    }
+
+    /**
+     * Sort branches: master first, then release / backports (by version, descending), others last.
+     * @param {string[]} branches
+     * @returns {void}
+     */
+    _sortBranches(branches) {
+        branches.sort((a, b) => {
+            if (a === "master") return -1;
+            if (b === "master") return 1;
+
+            const aVer = this._getBranchVersion(a);
+            const bVer = this._getBranchVersion(b);
+            const aPriority = a.startsWith("backports-release-") ? 2 : (a.startsWith("release-") ? 1 : 3);
+            const bPriority = b.startsWith("backports-release-") ? 2 : (b.startsWith("release-") ? 1 : 3);
+            if (aPriority !== bPriority) {
+                return aPriority - bPriority;
+            }
+
+            // Same category: sort by version number in descending order.
+            if (aVer !== "" && bVer !== "" && aVer !== bVer) {
+                return bVer.localeCompare(aVer, undefined, { numeric: true });
+            }
+
+            if (a > b) return 1;
+            if (a < b) return -1;
+            return 0;
+        });
+    }
+
     _saveUserPreferences() {
         const storedPreferences = greports.util.getLocalPreferences();
         let selectedBranches = storedPreferences["selectedBranches"];
@@ -140,7 +188,9 @@ export default class EntryComponent extends LitElement {
                     return;
                 }
 
-                this._branches.push(branch);
+                if (this._isAllowedBranch(branch)) {
+                    this._branches.push(branch);
+                }
                 const branchFiles = {};
 
                 data.files[branch].forEach((file) => {
@@ -173,6 +223,9 @@ export default class EntryComponent extends LitElement {
 
                 this._files[branch] = branchFiles;
             });
+
+            // Sort branches: master first, then release/backports by version descending, others last.
+            this._sortBranches(this._branches);
 
             // If our preferred branch doesn't exist, pick master.
             if (typeof this._files[this._selectedBranch] === "undefined") {
